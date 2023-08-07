@@ -1,8 +1,8 @@
-package handler
+package receive
 
 import (
 	"errors"
-	"github.com/aimerny/kook_bot/server"
+	websocket2 "github.com/aimerny/kook_bot/core/server/websocket"
 	"github.com/bytedance/sonic"
 	"github.com/gookit/event"
 	"github.com/gorilla/websocket"
@@ -11,10 +11,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type ReceiveFrameHandler struct {
+type FrameHandler struct {
 }
 
-func (rf *ReceiveFrameHandler) Handle(e event.Event) error {
+func (rf *FrameHandler) Handle(e event.Event) error {
 	logrus.WithField("event", e).Info("Received Frame")
 	if _, ok := e.Data()[base.EventDataFrameKey]; !ok {
 		return errors.New("data has no frame field")
@@ -26,9 +26,9 @@ func (rf *ReceiveFrameHandler) Handle(e event.Event) error {
 		return err
 	}
 	go func() {
-		for conn, status := range server.Clients {
+		for conn, status := range websocket2.Clients {
 			if conn == nil || !status {
-				delete(server.Clients, conn)
+				delete(websocket2.Clients, conn)
 				continue
 			}
 

@@ -2,15 +2,12 @@ package main
 
 import (
 	"github.com/aimerny/kook_bot/config"
-	"github.com/aimerny/kook_bot/processor"
-	"github.com/aimerny/kook_bot/server"
-	"github.com/idodo/golang-bot/kaihela/api/base"
+	"github.com/aimerny/kook_bot/core/processor"
+	"github.com/aimerny/kook_bot/core/server/http/controllers"
+	"github.com/aimerny/kook_bot/core/server/websocket"
 	log "github.com/sirupsen/logrus"
 	"sync"
-)
-
-const (
-	BASE_API_URL = "https://www.kookapp.cn/api"
+	"time"
 )
 
 var GlobalWaitGroup sync.WaitGroup
@@ -21,15 +18,18 @@ func main() {
 
 	Config, err := config.LoadConf()
 	if err != nil {
-		log.Error("Load conf failed!")
-		panic(err)
+		log.Errorf("Load conf failed: %s", err.Error())
+		time.Sleep(1 * time.Second)
+		return
 	}
 	GlobalWaitGroup = sync.WaitGroup{}
 
-	session := base.NewWebSocketSession(Config.Token, BASE_API_URL, "./session.pid", "", 1)
-	processor.InitSessionProcess(session)
+	session := processor.InitSession(Config)
 	GlobalWaitGroup.Add(1)
-	go server.StartWebSocketServer(&GlobalWaitGroup)
+	go websocket.StartWebSocketServer(&GlobalWaitGroup)
+	GlobalWaitGroup.Add(1)
+	go controllers.StartWebHttpServer(&GlobalWaitGroup)
+
 	//start ws proxy to connect and broadcast
 	session.Start()
 	log.Info("Connected to session!")

@@ -1,4 +1,4 @@
-package server
+package websocket
 
 import (
 	"fmt"
@@ -23,7 +23,7 @@ func StartWebSocketServer(wg *sync.WaitGroup) {
 
 	http.HandleFunc("/ws", EchoMessage)
 	logrus.Info("Ready to start ws server")
-	err := http.ListenAndServe(fmt.Sprintf("%s:%d", config.Config.Host, config.Config.Port), nil)
+	err := http.ListenAndServe(fmt.Sprintf("%s:%d", config.Config.Host, config.Config.WsPort), nil)
 	if err != nil {
 		logrus.Error("Failed to start a websocket server")
 	}

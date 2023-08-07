@@ -32,7 +32,9 @@
 ```yaml
 # Websocket服务启动的Host
 host: 127.0.0.1
-# Websocket服务启动的端口
+# Http API的监听端口
+http_api_port: 9001
+# Websocket服务监听的端口
 port: 9000
 # Kook机器人的Token，可在“Kook开发者平台->应用”中找到对应的机器人Token
 token: ""

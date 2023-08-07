@@ -1,15 +1,17 @@
 package config
 
 import (
+	"errors"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"os"
 )
 
 type Conf struct {
-	Port  int32  `yaml:"port"`
-	Host  string `yaml:"host"`
-	Token string `yaml:"token"`
+	Host        string `yaml:"host"`
+	HttpApiPort int32  `yaml:"http_api_port"`
+	WsPort      int32  `yaml:"ws_port"`
+	Token       string `yaml:"token"`
 }
 
 var Config *Conf = nil
@@ -28,15 +30,17 @@ func (c *Conf) loadConf() (*Conf, error) {
 
 	if !checkFileIsExist(filename) {
 		defaultConfig, _ := yaml.Marshal(Conf{
-			Port:  9000,
-			Host:  "127.0.0.1",
-			Token: "",
+			Host:        "127.0.0.1",
+			WsPort:      9000,
+			HttpApiPort: 9001,
+			Token:       "",
 		})
 		ioutil.WriteFile(
 			"config.yml",
 			defaultConfig,
 			777,
 		)
+		return nil, errors.New("'config.yml' not found! Created default config. Edit it please")
 	}
 	confFile, err := ioutil.ReadFile(filename)
 	if err != nil {
