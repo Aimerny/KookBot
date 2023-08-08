@@ -3,3 +3,4 @@ session.pid
 config.yml
 kook_bot
 dist
+dist/
