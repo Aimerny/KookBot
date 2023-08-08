@@ -7,14 +7,14 @@ release:
   draft: true
   discussion_category_name: General
 builds:
-  - id: nowin
+  - id: all
     env:
       - CGO_ENABLED=0
       - GO111MODULE=on
     goos:
       - linux
       - darwin
-      - win
+      - windows
     goarch:
       - '386'
       - amd64
